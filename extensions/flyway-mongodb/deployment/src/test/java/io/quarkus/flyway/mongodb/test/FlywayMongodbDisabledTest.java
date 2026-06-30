@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkus.test.QuarkusExtensionTest;
 
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbDisabledTest {
 
     @RegisterExtension
@@ -20,7 +20,7 @@ public class FlywayMongodbDisabledTest {
             .withApplicationRoot((jar) -> jar
                     .addAsResource("db/migration/V1__create_users.js",
                             "db/migration/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "disabled")
             .overrideConfigKey("quarkus.flyway-mongodb.enabled", "false");
 

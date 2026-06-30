@@ -19,12 +19,12 @@ import io.quarkus.test.QuarkusExtensionTest;
  * Flyway (not Instance), startup must fail with an InactiveBeanException that
  * names the config property to use for activation.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbActiveConfigFalseStaticInjectionTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "acfstatic")
             .overrideConfigKey("quarkus.flyway-mongodb.active", "false")
             .assertException(e -> assertThat(e)

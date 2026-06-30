@@ -24,12 +24,12 @@ import io.quarkus.test.QuarkusExtensionTest;
  * the named Flyway bean (not Instance), startup must fail with an InactiveBeanException
  * that describes why the named MongoDB client was deactivated.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbNamedClientConnectionStringMissingStaticInjectionTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "namedmissingstatic")
             .overrideConfigKey("quarkus.devservices.enabled", "false")
             // @MongoClientName("analytics") below causes the analytics client to be registered at build time.

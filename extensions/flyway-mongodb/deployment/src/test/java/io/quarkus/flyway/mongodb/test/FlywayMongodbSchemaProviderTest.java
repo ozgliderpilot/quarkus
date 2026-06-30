@@ -20,15 +20,16 @@ import io.quarkus.flyway.mongodb.runtime.FlywayMongodbSchemaProvider;
 import io.quarkus.mongodb.runtime.MongoConfig;
 import io.quarkus.test.QuarkusExtensionTest;
 
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbSchemaProviderTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot((jar) -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js",
                             "db/migration/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "schemaprov")
             .overrideConfigKey("quarkus.flyway-mongodb.database", "schemaprov")
             .overrideConfigKey("quarkus.flyway-mongodb.migrate-at-start", "true");

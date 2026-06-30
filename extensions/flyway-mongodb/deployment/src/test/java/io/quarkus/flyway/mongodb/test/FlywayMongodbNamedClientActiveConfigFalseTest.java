@@ -23,19 +23,20 @@ import io.quarkus.test.QuarkusExtensionTest;
  * When a named flyway-mongodb client is explicitly deactivated the default
  * client continues to work, and only the named client's bean is inactive.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbNamedClientActiveConfigFalseTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot(jar -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js", "db/migration/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "namedacf")
             .overrideConfigKey("quarkus.flyway-mongodb.migrate-at-start", "true")
             .overrideConfigKey("quarkus.flyway-mongodb.database", "namedacf")
             .overrideConfigKey("quarkus.mongodb.analytics.connection-string",
-                    FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+                    MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.analytics.database", "namedacf_analytics")
             .overrideConfigKey("quarkus.flyway-mongodb.analytics.active", "false");
 

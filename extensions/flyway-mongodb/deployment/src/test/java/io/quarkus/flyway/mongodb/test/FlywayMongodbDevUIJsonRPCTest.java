@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.devui.tests.DevUIJsonRPCTest;
 import io.quarkus.test.QuarkusDevModeTest;
 
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbDevUIJsonRPCTest extends DevUIJsonRPCTest {
 
     public FlywayMongodbDevUIJsonRPCTest() {
@@ -25,10 +25,11 @@ public class FlywayMongodbDevUIJsonRPCTest extends DevUIJsonRPCTest {
     @RegisterExtension
     static final QuarkusDevModeTest config = new QuarkusDevModeTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource(new StringAsset("db.createCollection('devuitest');"),
                             "db/migration/V1__init.js")
                     .addAsResource(new StringAsset(
-                            "quarkus.mongodb.connection-string=" + FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING + "\n"
+                            "quarkus.mongodb.connection-string=" + MongoContainerExtension.MONGO_CONNECTION_STRING + "\n"
                                     + "quarkus.mongodb.database=devuitest\n"
                                     + "quarkus.flyway-mongodb.database=devuitest"),
                             "application.properties"));

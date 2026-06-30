@@ -25,7 +25,7 @@ import io.quarkus.test.QuarkusExtensionTest;
  * {@code .json} migrations within a single project, so this test isolates
  * the JSON migration in its own location.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbJsonMigrationTest {
 
     private static final String DATABASE = "migrate_json";
@@ -35,7 +35,7 @@ public class FlywayMongodbJsonMigrationTest {
             .withApplicationRoot((jar) -> jar
                     .addAsResource("db/migration-json/V1__create_users.json",
                             "db/migration-json/V1__create_users.json"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.locations", "db/migration-json")

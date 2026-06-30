@@ -26,7 +26,7 @@ import io.quarkus.test.QuarkusExtensionTest;
  * client discovered at build time and does not require per-client opt-in for
  * the Flyway bean to be available.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbNamedClientNoExplicitConfigTest {
 
     private static final String DEFAULT_DB = "noexplicit_default";
@@ -37,13 +37,13 @@ public class FlywayMongodbNamedClientNoExplicitConfigTest {
             .withApplicationRoot(jar -> jar
                     .addAsResource("db/migration/V1__create_users.js", "db/migration/V1__create_users.js"))
             // Default client: fully configured.
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", DEFAULT_DB)
             .overrideConfigKey("quarkus.flyway-mongodb.database", DEFAULT_DB)
             // Named "analytics" client: only the MongoDB side is configured. No
             // quarkus.flyway-mongodb.analytics.* keys at all.
             .overrideConfigKey("quarkus.mongodb.analytics.connection-string",
-                    FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+                    MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.analytics.database", ANALYTICS_DB);
 
     @Inject

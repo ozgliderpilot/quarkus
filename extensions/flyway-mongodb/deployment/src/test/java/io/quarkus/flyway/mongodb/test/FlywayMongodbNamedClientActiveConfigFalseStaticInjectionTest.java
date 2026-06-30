@@ -24,17 +24,17 @@ import io.quarkus.test.QuarkusExtensionTest;
  * the named Flyway bean (not Instance), startup must fail with an InactiveBeanException that
  * names the config property to use for activation.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbNamedClientActiveConfigFalseStaticInjectionTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "namedacfstatic")
             // Build-time property needed so the MongoDB processor registers the analytics client
             // and the Flyway processor creates the analytics Flyway bean.
             .overrideConfigKey("quarkus.mongodb.analytics.connection-string",
-                    FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+                    MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.analytics.database", "namedacfstatic_analytics")
             .overrideConfigKey("quarkus.flyway-mongodb.analytics.active", "false")
             .assertException(e -> assertThat(e)

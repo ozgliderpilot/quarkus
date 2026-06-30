@@ -20,7 +20,7 @@ import com.mongodb.client.MongoClients;
 
 import io.quarkus.test.QuarkusExtensionTest;
 
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 @ExtendWith(FlywayMongodbRepairAtStartTest.SeedFailedHistory.class)
 public class FlywayMongodbRepairAtStartTest {
 
@@ -30,9 +30,10 @@ public class FlywayMongodbRepairAtStartTest {
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot((jar) -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js",
                             "db/migration/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.repair-at-start", "true")
@@ -64,7 +65,7 @@ public class FlywayMongodbRepairAtStartTest {
     static class SeedFailedHistory implements BeforeAllCallback {
         @Override
         public void beforeAll(ExtensionContext context) {
-            try (MongoClient client = MongoClients.create(FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)) {
+            try (MongoClient client = MongoClients.create(MongoContainerExtension.MONGO_CONNECTION_STRING)) {
                 var db = client.getDatabase(DATABASE);
                 db.drop();
                 db.getCollection(HISTORY).insertOne(new Document()

@@ -14,13 +14,13 @@ import io.restassured.RestAssured;
  * Verifies that when no MongoDB connection string is configured the app still boots
  * (Flyway bean is inactive), and that adding a valid connection string makes it active.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbDevModeTest {
 
     @RegisterExtension
     static final QuarkusDevModeTest config = new QuarkusDevModeTest()
             .withApplicationRoot((jar) -> jar
-                    .addClasses(MongodbDevModeTestEndpoint.class)
+                    .addClasses(MongodbDevModeTestEndpoint.class, ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js")
                     .addAsResource("config-empty-mongodb.properties", "application.properties"));
 
@@ -31,7 +31,7 @@ public class FlywayMongodbDevModeTest {
         config.modifyResourceFile("application.properties", new Function<String, String>() {
             @Override
             public String apply(String s) {
-                return "quarkus.mongodb.connection-string=" + FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING + "\n"
+                return "quarkus.mongodb.connection-string=" + MongoContainerExtension.MONGO_CONNECTION_STRING + "\n"
                         + "quarkus.mongodb.database=devmodetest\n"
                         + "quarkus.flyway-mongodb.migrate-at-start=true\n"
                         + "quarkus.flyway-mongodb.database=devmodetest";

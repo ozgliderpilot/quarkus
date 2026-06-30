@@ -17,15 +17,16 @@ import io.quarkus.test.QuarkusExtensionTest;
  * Verifies that migration files placed in a subdirectory of the configured
  * location are discovered and applied.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbMigrateAtStartSubfolderTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot(jar -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js",
                             "db/migration-subfolder/subfolder/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "subfolder")
             .overrideConfigKey("quarkus.flyway-mongodb.locations", "db/migration-subfolder")
             .overrideConfigKey("quarkus.flyway-mongodb.migrate-at-start", "true")

@@ -16,17 +16,17 @@ import com.mongodb.client.MongoClient;
 import io.quarkus.test.QuarkusDevModeTest;
 import io.restassured.RestAssured;
 
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbDevModeAddMigrationTest {
 
     @RegisterExtension
     static final QuarkusDevModeTest config = new QuarkusDevModeTest()
             .withApplicationRoot((jar) -> jar
-                    .addClasses(DocCountEndpoint.class)
+                    .addClasses(DocCountEndpoint.class, ContainerShellCommandCustomizer.class)
                     .addAsResource(new StringAsset("db.createCollection('migtest');"),
                             "db/migration/V1__init.js")
                     .addAsResource(new StringAsset(
-                            "quarkus.mongodb.connection-string=" + FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING + "\n"
+                            "quarkus.mongodb.connection-string=" + MongoContainerExtension.MONGO_CONNECTION_STRING + "\n"
                                     + "quarkus.mongodb.database=devmodeadd\n"
                                     + "quarkus.flyway-mongodb.migrate-at-start=true\n"
                                     + "quarkus.flyway-mongodb.clean-at-start=true\n"

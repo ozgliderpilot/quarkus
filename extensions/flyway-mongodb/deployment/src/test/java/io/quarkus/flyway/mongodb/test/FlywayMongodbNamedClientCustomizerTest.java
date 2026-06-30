@@ -25,7 +25,7 @@ import io.quarkus.test.QuarkusExtensionTest;
  * default client. Exercises the matching logic in
  * {@code FlywayMongodbContainerProducer#matchingCustomizers}.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbNamedClientCustomizerTest {
 
     private static final String DEFAULT_DB = "namedcust_default";
@@ -36,11 +36,11 @@ public class FlywayMongodbNamedClientCustomizerTest {
             .withApplicationRoot(jar -> jar
                     .addAsResource("db/migration/V1__create_users.js", "db/migration/V1__create_users.js")
                     .addClasses(DefaultClientCustomizer.class, AnalyticsClientCustomizer.class))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", DEFAULT_DB)
             .overrideConfigKey("quarkus.flyway-mongodb.database", DEFAULT_DB)
             .overrideConfigKey("quarkus.mongodb.analytics.connection-string",
-                    FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+                    MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.analytics.database", ANALYTICS_DB)
             .overrideConfigKey("quarkus.flyway-mongodb.analytics.database", ANALYTICS_DB);
 

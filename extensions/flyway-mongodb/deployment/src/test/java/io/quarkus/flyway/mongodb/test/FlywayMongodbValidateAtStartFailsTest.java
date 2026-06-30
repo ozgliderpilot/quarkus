@@ -22,7 +22,7 @@ import io.quarkus.test.QuarkusExtensionTest;
  * Validate-at-start without clean-on-validation-error must abort Quarkus startup
  * with a FlywayValidateException when the schema history is corrupt.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 @ExtendWith(FlywayMongodbValidateAtStartFailsTest.SeedCorruptHistory.class)
 public class FlywayMongodbValidateAtStartFailsTest {
 
@@ -32,9 +32,10 @@ public class FlywayMongodbValidateAtStartFailsTest {
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot((jar) -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js",
                             "db/migration/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.validate-at-start", "true")
@@ -51,7 +52,7 @@ public class FlywayMongodbValidateAtStartFailsTest {
     static class SeedCorruptHistory implements BeforeAllCallback {
         @Override
         public void beforeAll(ExtensionContext context) {
-            try (MongoClient client = MongoClients.create(FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)) {
+            try (MongoClient client = MongoClients.create(MongoContainerExtension.MONGO_CONNECTION_STRING)) {
                 var db = client.getDatabase(DATABASE);
                 db.drop();
                 db.getCollection(HISTORY).insertOne(new Document()

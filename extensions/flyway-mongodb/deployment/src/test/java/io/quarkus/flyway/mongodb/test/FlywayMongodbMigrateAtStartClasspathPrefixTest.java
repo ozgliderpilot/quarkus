@@ -17,15 +17,16 @@ import io.quarkus.test.QuarkusExtensionTest;
  * Verifies that a {@code classpath:} prefix in the locations config is stripped
  * and migrations are discovered and applied correctly.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbMigrateAtStartClasspathPrefixTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot(jar -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js",
                             "db/migration-classpath-prefix/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "classpathprefix")
             .overrideConfigKey("quarkus.flyway-mongodb.locations", "classpath:db/migration-classpath-prefix")
             .overrideConfigKey("quarkus.flyway-mongodb.migrate-at-start", "true")

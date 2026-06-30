@@ -19,7 +19,7 @@ import io.quarkus.test.QuarkusExtensionTest;
  * Verifies that baseline-on-migrate automatically inserts a baseline entry into the
  * schema history when migrate runs against a non-empty database with no schema history.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbBaselineOnMigrateTest {
 
     private static final String DATABASE = "baselineonmigrate";
@@ -27,8 +27,9 @@ public class FlywayMongodbBaselineOnMigrateTest {
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot(jar -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js", "db/migration/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.baseline-on-migrate", "true")

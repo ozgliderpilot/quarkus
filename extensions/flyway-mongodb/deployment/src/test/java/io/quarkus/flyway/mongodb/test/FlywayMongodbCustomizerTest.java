@@ -14,15 +14,15 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import io.quarkus.flyway.mongodb.FlywayMongodbConfigurationCustomizer;
 import io.quarkus.test.QuarkusExtensionTest;
 
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbCustomizerTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot((jar) -> jar
                     .addAsResource("db/migration/V1__create_users.js", "db/migration/V1__create_users.js")
-                    .addClasses(TableNameCustomizer.class))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+                    .addClasses(TableNameCustomizer.class, ContainerShellCommandCustomizer.class))
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "customizer")
             .overrideConfigKey("quarkus.flyway-mongodb.migrate-at-start", "true")
             .overrideConfigKey("quarkus.flyway-mongodb.database", "customizer");

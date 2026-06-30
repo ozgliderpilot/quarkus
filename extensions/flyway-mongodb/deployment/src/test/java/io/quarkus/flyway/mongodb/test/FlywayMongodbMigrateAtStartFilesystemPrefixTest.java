@@ -17,13 +17,14 @@ import io.quarkus.test.QuarkusExtensionTest;
  * Verifies that a {@code filesystem:} location is passed through to Flyway and
  * migrations on the actual filesystem are discovered and applied correctly.
  */
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbMigrateAtStartFilesystemPrefixTest {
 
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
-            .withEmptyApplication()
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .withApplicationRoot(jar -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class))
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", "filesystemprefix")
             .overrideConfigKey("quarkus.flyway-mongodb.locations", "filesystem:src/test/resources/db/migration")
             .overrideConfigKey("quarkus.flyway-mongodb.migrate-at-start", "true")

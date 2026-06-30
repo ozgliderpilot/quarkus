@@ -20,7 +20,7 @@ import com.mongodb.client.MongoCollection;
 
 import io.quarkus.test.QuarkusExtensionTest;
 
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 @ExtendWith(FlywayMongodbCleanAtStartTest.SeedGarbage.class)
 public class FlywayMongodbCleanAtStartTest {
 
@@ -29,9 +29,10 @@ public class FlywayMongodbCleanAtStartTest {
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot((jar) -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js",
                             "db/migration/V1__create_users.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.clean-at-start", "true")
@@ -67,7 +68,7 @@ public class FlywayMongodbCleanAtStartTest {
     static class SeedGarbage implements BeforeAllCallback {
         @Override
         public void beforeAll(ExtensionContext context) {
-            try (MongoClient client = MongoClients.create(FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)) {
+            try (MongoClient client = MongoClients.create(MongoContainerExtension.MONGO_CONNECTION_STRING)) {
                 var db = client.getDatabase(DATABASE);
                 db.drop();
                 db.getCollection("users").insertMany(List.of(

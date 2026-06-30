@@ -13,7 +13,7 @@ import com.mongodb.client.MongoClient;
 
 import io.quarkus.test.QuarkusExtensionTest;
 
-@ExtendWith(FlapdoodleMongodbExtension.class)
+@ExtendWith(MongoContainerExtension.class)
 public class FlywayMongodbScriptCallbackTest {
 
     private static final String DATABASE = "callback";
@@ -21,6 +21,7 @@ public class FlywayMongodbScriptCallbackTest {
     @RegisterExtension
     static final QuarkusExtensionTest config = new QuarkusExtensionTest()
             .withApplicationRoot((jar) -> jar
+                    .addClasses(ContainerShellCommandCustomizer.class)
                     .addAsResource("db/migration/V1__create_users.js",
                             "db/migration/V1__create_users.js")
                     .addAsResource("db/callback-extras/V2__insert_bob.js",
@@ -33,7 +34,7 @@ public class FlywayMongodbScriptCallbackTest {
                             "db/migration/beforeEachMigrate__marker.js")
                     .addAsResource("db/migration/afterEachMigrate__marker.js",
                             "db/migration/afterEachMigrate__marker.js"))
-            .overrideConfigKey("quarkus.mongodb.connection-string", FlapdoodleMongodbExtension.MONGO_CONNECTION_STRING)
+            .overrideConfigKey("quarkus.mongodb.connection-string", MongoContainerExtension.MONGO_CONNECTION_STRING)
             .overrideConfigKey("quarkus.mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.database", DATABASE)
             .overrideConfigKey("quarkus.flyway-mongodb.migrate-at-start", "true");
